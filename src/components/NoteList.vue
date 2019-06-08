@@ -1,6 +1,6 @@
 <template>
   <ul class="noteList">
-    <Note class="note" v-for="value in noteList" :content="value.content" :key="value.id" :id="value.id"></Note>
+    <Note class="note" v-for="value in noteList" :content="value.text" :key="value.id" :id="value.id"></Note>
   </ul>
 </template>
 
@@ -35,8 +35,9 @@
     },
     methods:{
       getList(){
-        axios.get(url.mock).then((res) => {
-          this.noteList = res.data.data.notes
+        axios.get(url.all).then((res) => {
+          console.log(res.data)
+          this.noteList = res.data
           console.log(this.noteList);
         })
       },

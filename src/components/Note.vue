@@ -12,7 +12,7 @@
       </div>
     </div>
 
-    <div class="content" contenteditable="true">{{content}}</div>
+    <div class="content" contenteditable="true" >{{content}}</div>
   </div>
 </template>
 

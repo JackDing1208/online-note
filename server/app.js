@@ -1,5 +1,5 @@
 const express = require('express')
-const Note = require()
+const Note = require('./note.js').Note
 const app = express()
 const port = 9999
 const allowCrossDomain = function (req, res, next) {
@@ -11,6 +11,11 @@ const allowCrossDomain = function (req, res, next) {
 };
 app.use(allowCrossDomain);
 
-app.get('/all', (req, res) => { res.send('Hello World!') })
+app.get('/all', (req, res) => {
+  console.log(Note);
+  Note.findAll({raw: true}).then((data) => {
+    res.send(data)
+  })
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
