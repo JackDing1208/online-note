@@ -1,6 +1,7 @@
 <template>
-  <div class="note" refs="note">
-    <div class="title" @mousedown="moveNote"
+  <div class="note" ref="note">
+    <div class="title" @mousedown="catchNote"
+         @mouseup="fixNote"
          @mouseenter="showDelete=true"
          @mouseleave="showDelete=false">
       <div class="time">{{createTime}}</div>
@@ -18,24 +19,57 @@
 <script>
   import '../assets/svg'
   import mixin from './Mixin'
+
   export default {
     name: "note",
-    props:['id','time','content'],
-    data(){
-      return{
-        showDelete:false
+    props: ['id', 'time', 'content'],
+    data() {
+      return {
+        showDelete: false,
+        disX: 0,
+        disY: 0,
+        isMoving: false
       }
     },
-    methods:{
-      deleteNote(){
-        this.eventBus.$emit('delete',this.id)
+    methods: {
+      deleteNote() {
+        this.eventBus.$emit('delete', this.id)
       },
-      moveNote(e){
+      catchNote(e) {
 
+        this.isMoving = true
+        let note = this.$refs.note
+        let {top, left} = note.getBoundingClientRect()
+        this.$refs.note.style.position = 'absolute'
+        note.style.left = left + 'px'
+        note.style.top = top + 'px'
+        this.disX = e.clientX - note.offsetLeft;
+        this.disY = e.clientY - note.offsetTop;
+      },
+      fixNote() {
+        this.isMoving = false
+        console.log('不动')
+      },
+      moveNote(e) {
+        let note = this.$refs.note
+        note.style.left = e.pageX - this.disX + 'px'
+        note.style.top = e.pageY -this.disY+ 'px'
       }
     },
-    mixins:[mixin],
-    inject:['eventBus']
+    watch: {
+      isMoving(newValue) {
+        if (newValue) {
+          document.onmousemove = this.moveNote
+          document.addEventListener('mouseup', this.fixNote)
+        } else if (!newValue) {
+          document.onmousemove = null
+          document.removeEventListener('mouseup', this.fixNote)
+
+        }
+      }
+    },
+    mixins: [mixin],
+    inject: ['eventBus']
 
   }
 </script>
@@ -72,7 +106,7 @@
     outline: none;
   }
 
-  .icon{
-    fill:#4d4d4d
+  .icon {
+    fill: #4d4d4d
   }
 </style>
