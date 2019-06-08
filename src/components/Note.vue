@@ -1,5 +1,5 @@
 <template>
-  <div class="note" ref="note">
+  <div class="note" ref="note" :class="{moving:isMoving}">
     <div class="title" @mousedown="catchNote"
          @mouseup="fixNote"
          @mouseenter="showDelete=true"
@@ -52,8 +52,15 @@
       },
       moveNote(e) {
         let note = this.$refs.note
+        let {height, width} = note.getBoundingClientRect()
         note.style.left = e.pageX - this.disX + 'px'
         note.style.top = e.pageY -this.disY+ 'px'
+        console.log(document.body.clientWidth);
+        let currentLeft=parseInt( note.style.left)
+        if(currentLeft+width>document.body.clientWidth){
+          note.style.left=document.body.clientWidth-width-20+'px'
+          this.fixNote()
+        }
       }
     },
     watch: {
@@ -83,6 +90,10 @@
     border-radius: 5px;
     border: 1px solid #aaa;
     margin-bottom: 20px;
+  }
+
+  .note.moving{
+    opacity: 0.8;
   }
 
   .title {
