@@ -2,7 +2,7 @@
   <ul class="noteList">
     <Note class="note" v-for="value in noteList"
           :content="value.text" :time="value.time" :key="value.id"
-          :id="value.id"  ref="note"
+          :id="value.id" ref="note"
     ></Note>
   </ul>
 </template>
@@ -17,7 +17,8 @@
     name: "NoteList",
     data() {
       return {
-        noteList: null
+        noteList: [],
+        isOnline: false
       }
     },
     created() {
@@ -34,19 +35,30 @@
     methods: {
       getList() {
         axios.get(url.all).then((res) => {
+          this.isOnline = true
           this.noteList = res.data.data
+        }).catch(() => {
+          alert('后台没响应，支持离线使用')
         })
       },
       addNote() {
-        let time=this.getTime()
-        axios.post(url.add + `?time=${time}`).then((res) => {
+        let time = this.getTime()
+        if (this.isOnline) {
+          axios.post(url.add + `?time=${time}`).then((res) => {
+            let newNote = {
+              id: res.data.id,
+              time: res.data.time,
+              content: ' '
+            }
+            this.noteList.push(newNote)
+          })
+        } else {
           let newNote = {
-            id: res.data.id,
-            time: res.data.time,
+            time: time,
             content: ' '
           }
           this.noteList.push(newNote)
-        })
+        }
       },
       deleteNote(id) {
         this.noteList.forEach((note, index) => {
@@ -68,11 +80,11 @@
 <style scoped>
   .noteList {
     display: grid;
-    grid-template-columns: repeat(auto-fill,300px);
-    grid-template-rows: repeat(auto-fill,10px);
+    grid-template-columns: repeat(auto-fill, 300px);
+    grid-template-rows: repeat(auto-fill, 10px);
     align-items: start;
-    justify-items:center;
-    justify-content:center
+    justify-items: center;
+    justify-content: center
   }
 
   .note {
