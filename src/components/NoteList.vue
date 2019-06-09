@@ -52,7 +52,7 @@
             this.noteList.splice(index, 1)
           }
         })
-        axios.post(url.delete, {id:id})
+        axios.post(url.delete+`?id=${id}`)
       }
     },
     components: {

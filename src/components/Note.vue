@@ -66,15 +66,9 @@
         }
       },
       postMessage(){
-        console.log(this.text)
-        let data={
-          text:this.text,
-          time:this.createTime
-        }
-        axios.post(url.add,data).then((res)=>{
+        axios.post(url.add+`?text=${this.text}&time=${this.createTime}`).then((res)=>{
           this.myId=res.data.data
           console.log(this.myId);
-
         })
       },
       saveText(){

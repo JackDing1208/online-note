@@ -20,7 +20,8 @@ app.get('/all', (req, res) => {
 
 app.post('/add', (req, res) => {
   console.log(req.body);
-  Note.create({text: "吃饭", time: "今天"}).then((note) => {
+  let {text,time}=req.query
+  Note.create({text: text, time: time}).then((note) => {
     res.send({status:0,data:note.id})
   })
 })
@@ -28,13 +29,13 @@ app.post('/add', (req, res) => {
 
 app.post('/delete',(req,res)=>{
 
-  console.log(req.body);
+  let id=req.query.id
   Note.destroy({
     where: {
-      text: "吃饭"
+      id:id
     }
   }).then(() => {
-    console.log("Done");
+    res.send({status:0,id:id})
   });
 })
 
