@@ -23,7 +23,7 @@
   }
 </script>
 
-<style scoped >
+<style scoped lang="scss">
 .top {
   display: flex;
   justify-content: space-between;
@@ -31,9 +31,13 @@
   font-size: 16px;
   color: #eee;
   font-weight: bold;
+  .create:hover{
+    cursor: pointer;
+  }
+  .login:hover{
+    cursor: pointer;
+  }
 }
 
-.create:hover{
-  cursor: pointer;
-}
+
 </style>
