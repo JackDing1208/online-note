@@ -12,10 +12,31 @@ const allowCrossDomain = function (req, res, next) {
 app.use(allowCrossDomain);
 
 app.get('/all', (req, res) => {
-  console.log(Note);
-  Note.findAll({raw: true}).then((data) => {
-    res.send(data)
+  Note.findAll({raw: true}).then((list) => {
+    res.send({status:0,data:list})
   })
 })
+
+
+app.post('/add', (req, res) => {
+  console.log(req.body);
+  Note.create({text: "吃饭", time: "今天"}).then((note) => {
+    res.send({status:0,data:note.id})
+  })
+})
+
+
+app.post('/delete',(req,res)=>{
+
+  console.log(req.body);
+  Note.destroy({
+    where: {
+      text: "吃饭"
+    }
+  }).then(() => {
+    console.log("Done");
+  });
+})
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

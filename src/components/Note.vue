@@ -4,7 +4,7 @@
          @mouseup="fixNote"
          @mouseenter="showDelete=true"
          @mouseleave="showDelete=false">
-      <div class="time">{{createTime}}</div>
+      <div class="time">{{time}}</div>
       <div class="delete" @click.stop="deleteNote" v-if="showDelete">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-closes"></use>
@@ -12,23 +12,28 @@
       </div>
     </div>
 
-    <div class="content" contenteditable="true" >{{content}}</div>
+    <div class="content" contenteditable="true" ref="text"
+         @blur="postMessage" @input="saveText">{{content}}</div>
   </div>
 </template>
 
 <script>
   import '../assets/svg'
   import mixin from './Mixin'
+  import axios from 'axios'
+  import url from '../assets/url'
 
   export default {
     name: "note",
     props: ['id', 'time', 'content'],
     data() {
       return {
+        text:this.content,
         showDelete: false,
         disX: 0,
         disY: 0,
-        isMoving: false
+        isMoving: false,
+        myId:this.id
       }
     },
     methods: {
@@ -36,7 +41,6 @@
         this.eventBus.$emit('delete', this.id)
       },
       catchNote(e) {
-
         this.isMoving = true
         let note = this.$refs.note
         let {top, left} = note.getBoundingClientRect()
@@ -55,12 +59,26 @@
         let {height, width} = note.getBoundingClientRect()
         note.style.left = e.pageX - this.disX + 'px'
         note.style.top = e.pageY -this.disY+ 'px'
-        console.log(document.body.clientWidth);
         let currentLeft=parseInt( note.style.left)
         if(currentLeft+width>document.body.clientWidth){
           note.style.left=document.body.clientWidth-width-20+'px'
           this.fixNote()
         }
+      },
+      postMessage(){
+        console.log(this.text)
+        let data={
+          text:this.text,
+          time:this.createTime
+        }
+        axios.post(url.add,data).then((res)=>{
+          this.myId=res.data.data
+          console.log(this.myId);
+
+        })
+      },
+      saveText(){
+        this.text=this.$refs.text.innerText
       }
     },
     watch: {

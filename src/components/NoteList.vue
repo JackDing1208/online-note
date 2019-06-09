@@ -1,6 +1,7 @@
 <template>
   <ul class="noteList">
-    <Note class="note" v-for="value in noteList" :content="value.text" :key="value.id" :id="value.id"></Note>
+    <Note class="note" v-for="value in noteList" :content="value.text" :time="value.time" :key="value.id"
+          :id="value.id"></Note>
   </ul>
 </template>
 
@@ -12,62 +13,66 @@
 
   export default {
     name: "NoteList",
-    data(){
-      return{
-        noteList:null
+    data() {
+      return {
+        noteList: null
       }
     },
-    created(){
+    created() {
       this.getList()
     },
     mounted() {
-      this.eventBus.$on('add',()=>{
+      this.eventBus.$on('add', () => {
         this.addNote()
       })
-      this.eventBus.$on('delete',(id)=>{
+      this.eventBus.$on('delete', (id) => {
         console.log(id);
-        this.noteList.forEach((note,index)=>{
-          if(note.id===id){
-            this.noteList.splice(index,1)
-          }
-        })
+        this.deleteNote(id)
       })
     },
-    methods:{
-      getList(){
+    methods: {
+      getList() {
         axios.get(url.all).then((res) => {
           console.log(res.data)
-          this.noteList = res.data
+          this.noteList = res.data.data
           console.log(this.noteList);
         })
       },
-      addNote(){
-        let newNote={
-          time:this.createTime,
-          content:''
+      addNote() {
+        let newNote = {
+          time: this.createTime,
+          content: ''
         }
         this.noteList.push(newNote)
         console.log(this.noteList)
+      },
+      deleteNote(id){
+        this.noteList.forEach((note, index) => {
+          if (note.id === id) {
+            this.noteList.splice(index, 1)
+          }
+        })
+        axios.post(url.delete, {id:id})
       }
     },
-    components:{
+    components: {
       Note
     },
-    inject:['eventBus'],
-    mixins:[Mixin]
+    inject: ['eventBus'],
+    mixins: [Mixin]
   }
 </script>
 
-<style scoped >
-  .noteList{
+<style scoped>
+  .noteList {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: flex-start;
-    margin:0 20px;
+    margin: 0 20px;
   }
 
-  .note{
+  .note {
     margin-right: 20px;
   }
 </style>
