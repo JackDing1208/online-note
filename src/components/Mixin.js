@@ -20,5 +20,12 @@ export default {
       let time = year + '年' + month + '月' + date + '日 ' + ' ' + hour + ':' + min
       return time
     }
+  },
+  filters:{
+    format(text){
+      let reg=new RegExp("<br/>","g");
+      let stt= text.replace(reg,"\r\n");
+      return stt
+    }
   }
 }

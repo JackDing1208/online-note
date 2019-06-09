@@ -13,7 +13,7 @@
     </div>
 
     <div class="content" contenteditable="true" ref="text"
-         @blur="editNote" @input="saveText">{{content}}
+         @blur="editNote" @input="saveText" v-html="content">
     </div>
   </div>
 </template>
@@ -37,16 +37,7 @@
       }
     },
     mounted() {
-      let note = this.$refs.note
-      let {height,top,left} = note.getBoundingClientRect()
-      let n = parseInt( height / 10) + 1
-      note.style.gridRow= `span ${n}`
-      // 自动布局实现方案有待调整
-      // this.$nextTick(()=>{
-      //   this.$refs.note.style.position = 'absolute'
-      //   note.style.left = left -10 + 'px'
-      //   note.style.top = top-10 + 'px'
-      // })
+        this.setHeight()
 
     },
     methods: {
@@ -78,12 +69,31 @@
           note.style.left = document.body.clientWidth - width - 20 + 'px'
           this.fixNote()
         }
+        let currentTop = parseInt(note.style.top)
+
+        if (currentTop + height > document.body.clientHeight) {
+          note.style.top = document.body.clientHeight - height - 20 + 'px'
+          this.fixNote()
+        }
       },
       editNote() {
         axios.post(url.edit + `?id=${this.id}&text=${this.text}`)
       },
       saveText() {
-        this.text = this.$refs.text.innerText
+
+        this.text = this.$refs.text.innerText.replace(/\n/g,"<br/>")
+      },
+      setHeight(){
+        let note = this.$refs.note
+        let {height,top,left} = note.getBoundingClientRect()
+        let n = parseInt( height / 10) + 1
+        note.style.gridRow= `span ${n}`
+        // 自动布局实现方案有待调整
+        this.$nextTick(()=>{
+          this.$refs.note.style.position = 'relative'
+          // note.style.left = left -10 + 'px'
+          // note.style.top = top-10 + 'px'
+        })
       }
     },
     watch: {
@@ -141,10 +151,6 @@
     top: -20px;
   }
 
-  .title:hover {
-    background: bisque;
-    cursor: pointer;
-  }
 
   .content {
     padding-top: 5px;

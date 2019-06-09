@@ -30,7 +30,6 @@
       this.eventBus.$on('delete', (id) => {
         this.deleteNote(id)
       })
-      this.setHeight()
     },
     methods: {
       getList() {
@@ -38,12 +37,6 @@
           this.noteList = res.data.data
         })
       },
-      setHeight(){
-        let notes=this.$refs.note
-        // let notes=document.querySelectorAll('.note')
-        console.log(notes);
-      },
-
       addNote() {
         let time=this.getTime()
         axios.post(url.add + `?time=${time}`).then((res) => {

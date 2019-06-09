@@ -40,6 +40,7 @@
     background-repeat:no-repeat ;
     background-position: center;
     background-size: cover;
+    background-attachment:fixed;
     min-height: 100vh;
     width: 100vw;
     display: flex;

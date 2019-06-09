@@ -4,7 +4,7 @@
     <svg class="icon" aria-hidden="true">
       <use xlink:href="#icon-close1"></use>
     </svg> 添加便签</div>
-  <div class="login">GitHub登录</div>
+  <div class="login" @click="login">GitHub登录</div>
 </div>
 </template>
 
@@ -15,6 +15,9 @@
     methods:{
       addNote(){
         this.eventBus.$emit('add')
+      },
+      login(){
+        alert('后台接口暂未调通')
       }
     }
   }
