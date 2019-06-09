@@ -1,7 +1,6 @@
 export default {
   computed: {
     createTime() {
-      console.log(1)
       let year = new Date().getFullYear()
       let month = new Date().getMonth() + 1
       let date = new Date().getDate()

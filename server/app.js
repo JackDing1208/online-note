@@ -19,16 +19,14 @@ app.get('/all', (req, res) => {
 
 
 app.post('/add', (req, res) => {
-  console.log(req.body);
-  let {text,time}=req.query
-  Note.create({text: text, time: time}).then((note) => {
+  let {time}=req.query
+  Note.create({time: time}).then((note) => {
     res.send({status:0,data:note.id})
   })
 })
 
 
 app.post('/delete',(req,res)=>{
-
   let id=req.query.id
   Note.destroy({
     where: {
@@ -36,6 +34,17 @@ app.post('/delete',(req,res)=>{
     }
   }).then(() => {
     res.send({status:0,id:id})
+  });
+})
+
+app.post('/edit',(req,res)=>{
+  let {id,text}=req.query
+  Note.update({ text: text }, {
+    where: {
+      id: id
+    }
+  }).then(() => {
+    console.log("Done");
   });
 })
 

@@ -38,20 +38,23 @@
         })
       },
       addNote() {
-        let newNote = {
-          time: new Date(),
-          content: ''
-        }
-        this.noteList.push(newNote)
-        console.log(this.noteList)
+        axios.post(url.add + `?time=${this.createTime}`).then((res) => {
+          let newNote = {
+            id: res.data.data,
+            time: new Date(),
+            content: ''
+          }
+          this.noteList.push(newNote)
+          console.log(this.noteList)
+        })
       },
-      deleteNote(id){
+      deleteNote(id) {
         this.noteList.forEach((note, index) => {
           if (note.id === id) {
             this.noteList.splice(index, 1)
           }
         })
-        axios.post(url.delete+`?id=${id}`)
+        axios.post(url.delete + `?id=${id}`)
       }
     },
     components: {

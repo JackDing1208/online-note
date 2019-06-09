@@ -13,7 +13,7 @@
     </div>
 
     <div class="content" contenteditable="true" ref="text"
-         @blur="postMessage" @input="saveText">{{content}}</div>
+         @blur="editNote" @input="saveText">{{content}}</div>
   </div>
 </template>
 
@@ -33,12 +33,9 @@
         disX: 0,
         disY: 0,
         isMoving: false,
-        myId:this.id,
       }
     },
-    mounted(){
-      console.log(typeof this.time);
-    },
+
     methods: {
       deleteNote() {
         this.eventBus.$emit('delete', this.id)
@@ -68,11 +65,8 @@
           this.fixNote()
         }
       },
-      postMessage(){
-        axios.post(url.add+`?text=${this.text}&time=${this.createTime}`).then((res)=>{
-          this.myId=res.data.data
-          console.log(this.myId);
-        })
+      editNote(){
+        axios.post(url.edit+`?id=${this.id}&text=${this.text}`)
       },
       saveText(){
         this.text=this.$refs.text.innerText
