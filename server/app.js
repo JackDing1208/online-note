@@ -21,7 +21,7 @@ app.get('/all', (req, res) => {
 app.post('/add', (req, res) => {
   let {time}=req.query
   Note.create({time: time}).then((note) => {
-    res.send({status:0,data:note.id})
+    res.send({status:0,id:note.id,time:time})
   })
 })
 

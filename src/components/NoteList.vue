@@ -1,7 +1,9 @@
 <template>
   <ul class="noteList">
-    <Note class="note" v-for="value in noteList" :content="value.text" :time="value.time" :key="value.id"
-          :id="value.id"></Note>
+    <Note class="note" v-for="value in noteList"
+          :content="value.text" :time="value.time" :key="value.id"
+          :id="value.id"  ref="note"
+    ></Note>
   </ul>
 </template>
 
@@ -28,24 +30,29 @@
       this.eventBus.$on('delete', (id) => {
         this.deleteNote(id)
       })
+      this.setHeight()
     },
     methods: {
       getList() {
         axios.get(url.all).then((res) => {
-          console.log(res.data)
           this.noteList = res.data.data
-          console.log(this.noteList);
         })
       },
+      setHeight(){
+        let notes=this.$refs.note
+        // let notes=document.querySelectorAll('.note')
+        console.log(notes);
+      },
+
       addNote() {
-        axios.post(url.add + `?time=${this.createTime}`).then((res) => {
+        let time=this.getTime()
+        axios.post(url.add + `?time=${time}`).then((res) => {
           let newNote = {
-            id: res.data.data,
-            time: new Date(),
-            content: ''
+            id: res.data.id,
+            time: res.data.time,
+            content: ' '
           }
           this.noteList.push(newNote)
-          console.log(this.noteList)
         })
       },
       deleteNote(id) {
@@ -67,11 +74,12 @@
 
 <style scoped>
   .noteList {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: flex-start;
-    margin: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,300px);
+    grid-template-rows: repeat(auto-fill,10px);
+    align-items: start;
+    justify-items:center;
+    justify-content:center
   }
 
   .note {

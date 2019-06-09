@@ -36,7 +36,7 @@
   }
 
   #app{
-    background-image: url("./assets/galaxy.jpg");
+    background-image: url("https://s2.ax1x.com/2019/06/09/VrB0BR.jpg");
     background-repeat:no-repeat ;
     background-position: center;
     background-size: cover;

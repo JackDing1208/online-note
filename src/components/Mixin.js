@@ -10,8 +10,8 @@ export default {
       return time
     }
   },
-  filters: {
-    getTime(obj){
+  methods: {
+    getTime(){
       let year = new Date().getFullYear()
       let month = new Date().getMonth() + 1
       let date = new Date().getDate()

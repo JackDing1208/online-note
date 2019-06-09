@@ -1,10 +1,10 @@
 <template>
   <div class="note" ref="note" :class="{moving:isMoving}">
-    <div class="title" @mousedown="catchNote"
-         @mouseup="fixNote"
+    <div class="move" @mousedown="catchNote" @mouseup="fixNote"></div>
+    <div class="title"
          @mouseenter="showDelete=true"
          @mouseleave="showDelete=false">
-      <div class="time">{{time|getTime}}</div>
+      <div class="time">{{time}}</div>
       <div class="delete" @click.stop="deleteNote" v-if="showDelete">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-closes"></use>
@@ -13,7 +13,8 @@
     </div>
 
     <div class="content" contenteditable="true" ref="text"
-         @blur="editNote" @input="saveText">{{content}}</div>
+         @blur="editNote" @input="saveText">{{content}}
+    </div>
   </div>
 </template>
 
@@ -28,14 +29,26 @@
     props: ['id', 'time', 'content'],
     data() {
       return {
-        text:this.content,
+        text: this.content,
         showDelete: false,
         disX: 0,
         disY: 0,
         isMoving: false,
       }
     },
+    mounted() {
+      let note = this.$refs.note
+      let {height,top,left} = note.getBoundingClientRect()
+      let n = parseInt( height / 10) + 1
+      note.style.gridRow= `span ${n}`
+      // 自动布局实现方案有待调整
+      // this.$nextTick(()=>{
+      //   this.$refs.note.style.position = 'absolute'
+      //   note.style.left = left -10 + 'px'
+      //   note.style.top = top-10 + 'px'
+      // })
 
+    },
     methods: {
       deleteNote() {
         this.eventBus.$emit('delete', this.id)
@@ -45,8 +58,9 @@
         let note = this.$refs.note
         let {top, left} = note.getBoundingClientRect()
         this.$refs.note.style.position = 'absolute'
-        note.style.left = left + 'px'
-        note.style.top = top + 'px'
+        this.$refs.note.style.zIndex = '1'
+        note.style.left = left -10 + 'px'
+        note.style.top = top-10 + 'px'
         this.disX = e.clientX - note.offsetLeft;
         this.disY = e.clientY - note.offsetTop;
       },
@@ -58,18 +72,18 @@
         let note = this.$refs.note
         let {height, width} = note.getBoundingClientRect()
         note.style.left = e.pageX - this.disX + 'px'
-        note.style.top = e.pageY -this.disY+ 'px'
-        let currentLeft=parseInt( note.style.left)
-        if(currentLeft+width>document.body.clientWidth){
-          note.style.left=document.body.clientWidth-width-20+'px'
+        note.style.top = e.pageY - this.disY -10+ 'px'
+        let currentLeft = parseInt(note.style.left)
+        if (currentLeft + width > document.body.clientWidth) {
+          note.style.left = document.body.clientWidth - width - 20 + 'px'
           this.fixNote()
         }
       },
-      editNote(){
-        axios.post(url.edit+`?id=${this.id}&text=${this.text}`)
+      editNote() {
+        axios.post(url.edit + `?id=${this.id}&text=${this.text}`)
       },
-      saveText(){
-        this.text=this.$refs.text.innerText
+      saveText() {
+        this.text = this.$refs.text.innerText
       }
     },
     watch: {
@@ -80,7 +94,6 @@
         } else if (!newValue) {
           document.onmousemove = null
           document.removeEventListener('mouseup', this.fixNote)
-
         }
       }
     },
@@ -92,16 +105,30 @@
 
 <style scoped>
   .note {
+    line-height: 25px;
     padding: 0.5em 0.5em;
     width: 15em;
     background: bisque;
     color: #4d4d4d;
-    border-radius: 5px;
     border: 1px solid #aaa;
-    margin-bottom: 20px;
+    margin: 10px;
+    -moz-user-select:none;
+    -webkit-user-select:none;
+    user-select:none;
+
   }
 
-  .note.moving{
+  .note .move {
+    background: #2baca4;
+    height: 20px;
+    width: 50%;
+    position: relative;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .note.moving {
     opacity: 0.8;
   }
 
@@ -110,6 +137,8 @@
     justify-content: space-between;
     border-bottom: 1px solid #aaa;
     padding-bottom: 5px;
+    position: relative;
+    top: -20px;
   }
 
   .title:hover {
@@ -120,6 +149,8 @@
   .content {
     padding-top: 5px;
     min-height: 3em;
+    position: relative;
+    top: -20px;
   }
 
   .content:focus {
