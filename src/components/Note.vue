@@ -4,7 +4,7 @@
          @mouseup="fixNote"
          @mouseenter="showDelete=true"
          @mouseleave="showDelete=false">
-      <div class="time">{{time}}</div>
+      <div class="time">{{time|getTime}}</div>
       <div class="delete" @click.stop="deleteNote" v-if="showDelete">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-closes"></use>
@@ -33,8 +33,11 @@
         disX: 0,
         disY: 0,
         isMoving: false,
-        myId:this.id
+        myId:this.id,
       }
+    },
+    mounted(){
+      console.log(typeof this.time);
     },
     methods: {
       deleteNote() {

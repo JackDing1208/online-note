@@ -26,7 +26,6 @@
         this.addNote()
       })
       this.eventBus.$on('delete', (id) => {
-        console.log(id);
         this.deleteNote(id)
       })
     },
@@ -40,7 +39,7 @@
       },
       addNote() {
         let newNote = {
-          time: this.createTime,
+          time: new Date(),
           content: ''
         }
         this.noteList.push(newNote)
